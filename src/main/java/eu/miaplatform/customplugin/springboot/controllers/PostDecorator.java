@@ -30,18 +30,20 @@ public class PostDecorator {
     @PostMapping("/checksignature")
     @ApiOperation(value = "Check if the email is authentic")
     @ResponseBody
-    public ResponseEntity<Serializable> checkSignature(@RequestBody PostDecoratorRequest request) throws JsonProcessingException, InvalidKeySpecException, NoSuchAlgorithmException {
+    public ResponseEntity<Serializable> checkSignature(@RequestBody PostDecoratorRequest request) throws JsonProcessingException {
         EmailMessage emailResponseBody = getResponseEmailFromRequest(request);
         byte[] messageSignature = emailResponseBody.getEmailSignature();
-        PublicKey pubKey = SignatureUtils.getPublicKey(emailResponseBody);
-        EmailMessage modified = emailResponseBody.clone();
-        modified.setPubKey(null);
-        modified.setEmailSignature(null);
         boolean signatureVerified = false;
+
+        EmailMessage responseWithoutSignature = emailResponseBody.clone();
+        responseWithoutSignature.setPubKey(null);
+        responseWithoutSignature.setEmailSignature(null);
+
         Map<String, String> verifiedHeaders = new HashMap<>();
         try {
-            signatureVerified = SignatureUtils.checkSignature(modified.toString(), messageSignature, pubKey);
-        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException ex) {
+            PublicKey pubKey = SignatureUtils.getPublicKey(emailResponseBody);
+            signatureVerified = SignatureUtils.checkSignature(responseWithoutSignature.toString(), messageSignature, pubKey);
+        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | InvalidKeySpecException ex) {
             ex.printStackTrace();
         }
         if (signatureVerified) {
