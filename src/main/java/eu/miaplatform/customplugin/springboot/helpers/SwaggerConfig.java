@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package eu.miaplatform.customplugin.springboot;
+package eu.miaplatform.customplugin.springboot.helpers;
 
+import eu.miaplatform.customplugin.springboot.CPSwaggerConfig;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -63,4 +64,8 @@ public class SwaggerConfig extends CPSwaggerConfig {
         return "info@mia-platform.eu";
     }
 
+    @Override
+    public String getSelector() {
+        return "eu.miaplatform.customplugin.springboot";
+    }
 }
