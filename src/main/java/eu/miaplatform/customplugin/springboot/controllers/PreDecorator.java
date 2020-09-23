@@ -37,8 +37,8 @@ public class PreDecorator {
 
         Base64.Encoder encoder = Base64.getEncoder();
         KeyPair keyPair = SignatureUtils.genKeyPair();
-        byte[] encodedhash = SignatureUtils.genSignature(originalBody.toString(), keyPair.getPrivate());
-        originalBody.setEmailSignature(encodedhash);
+        byte[] encodedSignature = SignatureUtils.genSignature(originalBody.toString(), keyPair.getPrivate());
+        originalBody.setEmailSignature(encodedSignature);
         originalBody.setPubKey(encoder.encodeToString(keyPair.getPublic().getEncoded()));
 
         PreDecoratorRequest updatedRequest = request.changeOriginalRequest().setBody(originalBody).build();

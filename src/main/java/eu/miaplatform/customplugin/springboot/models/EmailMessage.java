@@ -25,7 +25,14 @@ import java.io.Serializable;
 @Data
 @ToString
 @NoArgsConstructor
-public class EmailMessage implements Serializable {
+public class EmailMessage implements Cloneable, Serializable {
+    public EmailMessage clone() {
+        try {
+            return (EmailMessage) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
+    }
     public String from;
     public String body;
     public String to;

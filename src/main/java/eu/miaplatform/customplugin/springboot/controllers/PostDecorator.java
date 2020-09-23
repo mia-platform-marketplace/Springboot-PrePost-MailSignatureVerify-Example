@@ -32,13 +32,15 @@ public class PostDecorator {
     @ResponseBody
     public ResponseEntity<Serializable> checkSignature(@RequestBody PostDecoratorRequest request) throws JsonProcessingException, InvalidKeySpecException, NoSuchAlgorithmException {
         EmailMessage emailResponseBody = getResponseEmailFromRequest(request);
-        EmailMessage originalEmailBody = getOriginalEmailFromRequest(request);
         byte[] messageSignature = emailResponseBody.getEmailSignature();
         PublicKey pubKey = SignatureUtils.getPublicKey(emailResponseBody);
+        EmailMessage modified = emailResponseBody.clone();
+        modified.setPubKey(null);
+        modified.setEmailSignature(null);
         boolean signatureVerified = false;
         Map<String, String> verifiedHeaders = new HashMap<>();
         try {
-            signatureVerified = SignatureUtils.checkSignature(originalEmailBody.toString(), messageSignature, pubKey);
+            signatureVerified = SignatureUtils.checkSignature(modified.toString(), messageSignature, pubKey);
         } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException ex) {
             ex.printStackTrace();
         }
@@ -57,14 +59,6 @@ public class PostDecorator {
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Gson gson = new Gson();
         String jsonRequestBody = gson.toJson(request.getOriginalResponseBody(), LinkedHashMap.class);
-        return objectMapper.readValue(jsonRequestBody, EmailMessage.class);
-    }
-
-    private EmailMessage getOriginalEmailFromRequest(PostDecoratorRequest request) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        Gson gson = new Gson();
-        String jsonRequestBody = gson.toJson(request.getOriginalRequestBody(), LinkedHashMap.class);
         return objectMapper.readValue(jsonRequestBody, EmailMessage.class);
     }
 }
