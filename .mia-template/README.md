@@ -1,51 +1,7 @@
-# mia_template_service_name_placeholder
+# Tag Project
 
-Welcome to Java Spring Boot example service for Mia-Platform!
+## Run script
 
-## How to develop this service
-
-This example jus expose hello endpoint.
-
-### Run locally
-
-To run locally this example just run the
-
-```bash
-mvn spring-boot:run
-```
-
-To change server port
-
-```bash
-mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8000
-```
-
-To launch tests locally
-
-```bash
-mvn test
-```
-
-To build it
-
-```bash
-mvn clean package
-```
-
-To force mvn package update
-
-```bash
-mvn clean install -U
-```
-
-### Routes
-
-The following routes are exposed
-
-- [http://localhost:3000/hello]() - hello controller
-- [http://localhost:3000/-/ready]() - the service is ready (used by k8s)
-- [http://localhost:3000/-/healthz]() - the service is healthy (used by k8s)
-- [http://localhost:3000/documentation/json]() - the Open API 3 specification
 
 ### Tag new project version
 
@@ -70,7 +26,7 @@ According to Mia-Platform release process *rc* could be:
 
 #### Promote `rc` release
 
-When your service is ready to production you can promote your rc version invoking the scritp with `promote` option.
+When your service is ready to production you can promote your rc version invoking the script with `promote` option.
 
 ```bash
 ./tag.sh promote

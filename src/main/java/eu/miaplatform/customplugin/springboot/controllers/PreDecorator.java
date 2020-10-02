@@ -32,7 +32,12 @@ public class PreDecorator {
     public ResponseEntity<Serializable> signEmail(@RequestBody PreDecoratorRequest request) throws JsonProcessingException, NoSuchAlgorithmException, SignatureException, InvalidKeyException {
         EmailMessage originalBody = getEmailFromRequest(request);
         if (Strings.isNullOrEmpty(originalBody.getFrom())) {
-            originalBody.setFrom(getNewUserId(request));
+            try {
+                originalBody.setFrom(request.getUserId());
+            } catch (Exception ex) {
+                DecoratorResponse response = DecoratorResponseFactory.abortChain(400);
+                return DecoratorUtils.getResponseEntityFromDecoratorResponse(response);
+            }
         }
 
         Base64.Encoder encoder = Base64.getEncoder();
@@ -52,14 +57,5 @@ public class PreDecorator {
         Gson gson = new Gson();
         String jsonRequestBody = gson.toJson(request.getOriginalRequestBody(), LinkedHashMap.class);
         return objectMapper.readValue(jsonRequestBody, EmailMessage.class);
-    }
-
-    private String getNewUserId(PreDecoratorRequest request) {
-        final String defaultWho = "John Doe";
-        try {
-            return request.getUserId();
-        } catch (Exception ex) {
-            return defaultWho;
-        }
     }
 }
